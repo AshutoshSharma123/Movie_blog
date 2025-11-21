@@ -1,30 +1,37 @@
 import Moviecard from '../components/Moviecard'
 import { useState } from 'react'
-const movie = [{
-    id: 1,
-    title: 'Kantara',
-    release_date: '2022-10-20'
-},
-{
-    id: 2,
-    title: 'KGF',
-    release_date: '2021-10-20'
-},
-{
-    id: 3,
-    title: 'RRR',
-    release_date: '2022-10-20'
-},
-{
-    id: 4,
-    title: 'GOlmal',
-    release_date: '2002-10-20'
-}
+import { searchMovies, getPopularMovies } from '../services/api'
 
-]
+import { useEffect } from 'react'
 
 const Home = () => {
+
     const [searchQuery, setSearchQuery] = useState('')
+    const [movie, setMovie] = useState([])
+    const [error, setError] = useState(null)
+    const [loading, setLoading] = useState(true)
+    useEffect(() => {
+
+        const loadMovies = async () => {
+
+            try {
+                const popularMovies = await getPopularMovies();
+                setMovie(popularMovies);
+                console.log(popularMovies);
+                setLoading(false);
+            } catch (error) {
+                setLoading(false);
+                setError('Failed to fetch movies. Please try again later.');
+                console.log(error);
+
+            }
+        }
+
+
+        loadMovies();
+    }, [])
+
+
     const handleSearch = (e) => {
         e.preventDefault()
         alert(`Searching for ${searchQuery}`)
@@ -51,13 +58,21 @@ const Home = () => {
             </button>
         </form>
 
-            <div className='home grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
-                {movie.map(movie =>
-                    movie.title.toLowerCase().startsWith(searchQuery) && (
-                        <Moviecard key={movie.id} movie={movie} />
+
+            {error && <p className="text-red-500 mb-4">{error}</p>}
+
+            {loading ? <p>Loading...</p> : <div className='home grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
+                {movie
+                    .filter(m =>
+                        m?.Title?.toLowerCase().startsWith(searchQuery.toLowerCase())
                     )
-                )}
-            </div>
+                    .map(m => (
+                        <Moviecard key={m.imdbID} movie={m} />
+                    ))
+                }
+            </div>}
+
+
         </>
 
     )

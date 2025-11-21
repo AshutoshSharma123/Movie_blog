@@ -30,8 +30,8 @@ const Moviecard = ({ movie }) => {
 
             {/* Movie Info */}
             <div className="movie-info p-4 bg-gray-900 text-white">
-                <h3 className="text-lg font-semibold truncate">{movie.title}</h3>
-                <p className="text-sm text-gray-400">{movie.release_date}</p>
+                <h3 className="text-lg font-semibold truncate">{movie.Title}</h3>
+                <p className="text-sm text-gray-400">{movie.Year}</p>
             </div>
         </div>
     );
